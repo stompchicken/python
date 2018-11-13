@@ -40,14 +40,28 @@ function translate(index, dx, dy) {
 }
 
 function move(index, direction) {
-    if(direction == Direction.NORTH) {
+    if (direction == Direction.NORTH) {
         return translate(index, 0, -1);
-    } else if(direction == Direction.SOUTH) {
+    } else if (direction == Direction.SOUTH) {
         return translate(index, 0, +1);
-    } else if(direction == Direction.EAST) {
+    } else if (direction == Direction.EAST) {
         return translate(index, +1, 0);
-    } else if(direction == Direction.WEST) {
+    } else if (direction == Direction.WEST) {
         return translate(index, -1, 0);
+    } else {
+        console.error("Unknown direction: "+direction)
+    }
+}
+
+function turnLeft(direction) {
+    if (direction == Direction.NORTH) {
+        return Direction.WEST;
+    } else if (direction == Direction.SOUTH) {
+        return Direction.EAST;
+    } else if (direction == Direction.EAST) {
+        return Direction.NORTH;
+    } else if (direction == Direction.WEST) {
+        return Direction.SOUTH;
     } else {
         console.error("Unknown direction: "+direction)
     }
@@ -84,7 +98,7 @@ function initMap() {
 function initSnake() {
     return {
         head: coordsToIdx(2, 5),
-        body: [coordsToIdx(1, 5)],
+        body: [],
         direction: Direction.EAST,
         terminated: false
     }
@@ -92,7 +106,26 @@ function initSnake() {
 
 
 function stepFwd(state) {
-    state.snake.head = move(state.snake.head, state.snake.direction)
+    var direction = state.snake.direction;
+    var newHead = move(state.snake.head, direction)
+    if (state.map[newHead] == Cell.BLOCK) {
+        direction = turnLeft(direction);
+        newHead = move(state.snake.head, direction)
+        if (state.map[newHead] == Cell.BLOCK) {
+            state.terminated = true;
+            return state;
+        } else {
+            state.snake.head = newHead;
+            state.snake.direction = direction;
+        }
+    } else {
+        state.snake.head = newHead;
+    }
+
+    //   var lastDirection = direction;
+    //   for(var i = 0; i < state.snake.body.length; i++) {
+    //       state.snake.body[i] = move(state.snake.body[i], lastDirection);
+    //   }
 
     return state;
 }
