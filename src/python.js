@@ -92,13 +92,16 @@ function initMap() {
         map[coordsToIdx(MAP_WIDTH - 1, i)] = Cell.BLOCK;
     }
 
+    map[coordsToIdx(5,5)] = Cell.BLOCK;
+    map[coordsToIdx(4,4)] = Cell.BLOCK;
+
     return map;
 }
 
 function initSnake() {
     return {
         head: coordsToIdx(2, 5),
-        body: [],
+        body: [coordsToIdx(1, 5)],
         direction: Direction.EAST,
         terminated: false
     }
@@ -107,6 +110,7 @@ function initSnake() {
 
 function stepFwd(state) {
     var direction = state.snake.direction;
+    var oldHead = state.snake.head;
     var newHead = move(state.snake.head, direction)
     if (state.map[newHead] == Cell.BLOCK) {
         direction = turnLeft(direction);
@@ -122,10 +126,12 @@ function stepFwd(state) {
         state.snake.head = newHead;
     }
 
-    //   var lastDirection = direction;
-    //   for(var i = 0; i < state.snake.body.length; i++) {
-    //       state.snake.body[i] = move(state.snake.body[i], lastDirection);
-    //   }
+    var lastIdx = oldHead;
+    for(var i = 0; i < state.snake.body.length; i++) {
+        var temp = state.snake.body[i];
+        state.snake.body[i] = lastIdx;
+        lastIdx = temp;
+    }
 
     return state;
 }
