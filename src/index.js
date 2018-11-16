@@ -17,9 +17,12 @@ var programState = initProgramState()
 var gameState = {
     map: [],
     snake: [],
+    snakeText: [],
 
     cursor: null,
     cursorIdx: coordsToIdx(1,5),
+
+    outputText: null,
 };
 
 function preload() {
@@ -27,6 +30,7 @@ function preload() {
                           { frameWidth: 32,
                             frameHeight: 32 });
 
+    
 }
 
 function create() {
@@ -41,9 +45,14 @@ function create() {
         gameState.snake.push(this.add.sprite(0, 0, 'block'));
     }
 
+    for(var i = 0; i < MAX_SNAKE; i++) {
+        gameState.snakeText.push(this.add.text(0, 0, '1', { fontSize: '20px', fill: '#FFF' }));
+    }
+
     gameState.cursor = this.add.sprite(100, 50, 'block');
     gameState.cursor.setFrame(4);
 
+    gameState.outputText = this.add.text(200, 400, 'HELLO WORLD', { fontSize: '64px', fill: '#FFF' });
 
     updateGame(programState, gameState);
 }
@@ -81,6 +90,13 @@ function updateSprite(sprite, index, frame) {
     sprite.setFrame(frame);
 }
 
+function updateText(text, index, str) {
+    var coords = idxToCoords(index);
+    text.setX(100 + coords[0] * 32 - 4);
+    text.setY(50 + coords[1] * 32 - 10);
+    //sprite.setFrame(frame);
+}
+
 function updateGame(programState, gameState) {
 
     // update cell graphics
@@ -99,6 +115,7 @@ function updateGame(programState, gameState) {
     updateSprite(gameState.snake[0], programState.snake.head, 3);
     for (var i = 0; i < programState.snake.body.length; i++) {
         updateSprite(gameState.snake[i+1], programState.snake.body[i], 2);
+        updateText(gameState.snakeText[i+1], programState.snake.body[i], "x");
     }
     for(var i = programState.snake.body.length; i < MAX_SNAKE - (programState.snake.body.length + 1); i++) {
         updateSprite(gameState.snake[i+programState.snake.body.length + 1], programState.snake.body[i], 0);
