@@ -1,10 +1,14 @@
 var MAP_WIDTH = 11;
 var MAP_HEIGHT = 11;
-var MAX_SNAKE = MAP_WIDTH * MAP_HEIGHT;
+var MAX_SNAKE = 20;
 
 var Cell = {
     EMPTY: 1,
-    BLOCK: 2
+    BLOCK: 2,
+
+    OP_ADD: 3,
+
+    DATA: 256
 }
 
 var Direction = {
@@ -92,8 +96,7 @@ function initMap() {
         map[coordsToIdx(MAP_WIDTH - 1, i)] = Cell.BLOCK;
     }
 
-    map[coordsToIdx(5,5)] = Cell.BLOCK;
-    map[coordsToIdx(4,4)] = Cell.BLOCK;
+    map[coordsToIdx(5,5)] = Cell.OP_ADD;
 
     return map;
 }
@@ -101,7 +104,8 @@ function initMap() {
 function initSnake() {
     return {
         head: coordsToIdx(2, 5),
-        body: [coordsToIdx(1, 5)],
+        body: [],
+        stack: [],
         direction: Direction.EAST,
         terminated: false
     }
